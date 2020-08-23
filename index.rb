@@ -10,30 +10,41 @@ def input_time
 end
 
 def push_info(lists, subject, time)
-  if lists.any? { |hash| hash.value?(subject) }
-    lists.each do |hash|
-      if hash.value?(subject)
-        hash[:time] += time
-        break
-      end
-    end
-  else
-    lists.push({ subject: subject, time: time })
-  end
+  insert_time = if lists.key?(subject)
+                  lists[subject] + time
+                else
+                  time
+                end
+  lists.store(subject, insert_time)
 end
 
 def print_lists(lists)
-  puts "学習記録\n\n"
+  puts "#####学習記録#####"
+  lists.each do |key, value|
+    square = "■ " * (value / 15)
+    puts "#{key} #{square}"
+  end
+  puts "##################"
+end
 
-  lists.each do |hash|
-    square = "■ " * (hash[:time] / 15)
-    puts "#{hash[:subject]} #{square}"
+def input_y_n
+  print "続けて入力しますか？ y/n > "
+  loop do
+    y_n = gets.chomp
+    if y_n == "n"
+      puts "お疲れ様でした！"
+      exit
+    elsif y_n == "y"
+      puts "##################"
+      return
+    else
+      print "不正な入力です。もう一度入力してください y/n > "
+    end
   end
 end
 
-
 ### 実行パート ここから ###
-lists = []
+lists = {}
 
 loop do
   puts "今日はどの項目を何分勉強した？"
@@ -44,4 +55,6 @@ loop do
   push_info(lists, subject, time)
 
   print_lists(lists)
+
+  input_y_n
 end
